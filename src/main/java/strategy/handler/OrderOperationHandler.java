@@ -19,13 +19,13 @@ public class OrderOperationHandler implements OperationHandler {
 
     @Override
     public void commitOperation(String[] rawData, List<String> queries) {
-        if (rawData[TYPE_INDEX].equals(SELL_TYPE)) {
+        if (rawData[TYPE_INDEX].equalsIgnoreCase(SELL_TYPE)) {
             Order order = orderDao.getMaxOrder(OrderType.BID);
             orderDao.update(OrderType.BID,
                     order.getPrice(), order.getSize() - Integer.parseInt(rawData[VALUE_INDEX]));
             return;
         }
-        if (rawData[TYPE_INDEX].equals(BUY_TYPE)) {
+        if (rawData[TYPE_INDEX].equalsIgnoreCase(BUY_TYPE)) {
             Order order = orderDao.getMinOrder(OrderType.ASK);
             orderDao.update(OrderType.ASK,
                     order.getPrice(), order.getSize() - Integer.parseInt(rawData[VALUE_INDEX]));

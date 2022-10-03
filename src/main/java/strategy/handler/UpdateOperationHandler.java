@@ -22,7 +22,7 @@ public class UpdateOperationHandler implements OperationHandler {
         int price = Integer.parseInt(rawData[PRICE_INDEX]);
         int size = Integer.parseInt(rawData[SIZE_INDEX]);
         OrderType type = Arrays.stream(OrderType.values())
-                .filter(t -> t.getType().equals(rawData[TYPE_INDEX]))
+                .filter(t -> t.getType().equalsIgnoreCase(rawData[TYPE_INDEX]))
                 .findFirst().orElseThrow(
                         () -> new NoSuchElementException("Incorrect type: " + rawData[TYPE_INDEX]));
         orderDao.update(type, price, size);

@@ -21,10 +21,10 @@ public class QueryOperationHandler implements OperationHandler {
     @Override
     public void commitOperation(String[] rawData, List<String> queries) {
         String output;
-        if (rawData[TYPE_INDEX].equals(BEST_BID)) {
+        if (rawData[TYPE_INDEX].equalsIgnoreCase(BEST_BID)) {
             Order order = orderDao.getMaxOrder(OrderType.BID);
             output = order.getPrice() + SEPARATOR + order.getSize();
-        } else if (rawData[TYPE_INDEX].equals(BEST_ASK)) {
+        } else if (rawData[TYPE_INDEX].equalsIgnoreCase(BEST_ASK)) {
             Order order = orderDao.getMinOrder(OrderType.ASK);
             output = order.getPrice() + SEPARATOR + order.getSize();
         } else {
