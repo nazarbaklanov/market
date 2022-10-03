@@ -24,7 +24,7 @@ public class ProcessorServiceImpl implements ProcessorService {
         for (String s : rawData) {
             String[] dataRow = s.split(SEPARATOR);
             OperationType type = Arrays.stream(OperationType.values())
-                    .filter(o -> o.getType().equals(dataRow[TYPE_INDEX]))
+                    .filter(o -> o.getType().equals(dataRow[TYPE_INDEX].toLowerCase()))
                     .findFirst()
                     .orElseThrow(() ->
                             new NoSuchElementException("Incorrect operation type: "
