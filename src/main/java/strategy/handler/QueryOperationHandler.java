@@ -1,7 +1,7 @@
 package strategy.handler;
 
-import java.util.List;
 import dao.OrderDao;
+import java.util.List;
 import model.Order;
 import model.OrderType;
 
@@ -9,8 +9,8 @@ public class QueryOperationHandler implements OperationHandler {
     private static final String SEPARATOR = ",";
     private static final String BEST_BID = "best_bid";
     private static final String BEST_ASK = "best_ask";
-    private static int TYPE_INDEX = 1;
-    private static int PRICE_INDEX = 2;
+    private static final int TYPE_INDEX = 1;
+    private static final int PRICE_INDEX = 2;
 
     private final OrderDao orderDao;
 

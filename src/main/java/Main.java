@@ -1,8 +1,8 @@
+import dao.OrderDao;
+import dao.OrderDaoImpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import dao.OrderDao;
-import dao.OrderDaoImpl;
 import model.OperationType;
 import service.FileCreatorService;
 import service.FileReaderService;
@@ -35,7 +35,8 @@ public class Main {
         FileReaderService readerService = new FileReaderServiceImpl();
         List<String> stringList = readerService.read(INPUT_FILE_NAME);
 
-        OperationHandlerStrategy operationHandlerStrategy = new OperationHandlerStrategyImpl(operationHandlerMap);
+        OperationHandlerStrategy operationHandlerStrategy
+                = new OperationHandlerStrategyImpl(operationHandlerMap);
 
         ProcessorService processorService = new ProcessorServiceImpl(operationHandlerStrategy);
         List<String> data = processorService.process(stringList);

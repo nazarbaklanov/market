@@ -6,7 +6,6 @@ public enum OrderType {
 
     private final String type;
 
-
     OrderType(String type) {
         this.type = type;
     }

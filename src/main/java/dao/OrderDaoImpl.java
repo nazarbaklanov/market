@@ -1,21 +1,22 @@
 package dao;
 
+import db.Storage;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import db.Storage;
 import model.Order;
 import model.OrderType;
 
 public class OrderDaoImpl implements OrderDao {
     @Override
     public void update(OrderType type, int price, int size) {
-        getOrderFromDb(price).orElseGet(() ->
-        {
-            Order order = new Order(type, price, size);
-            Storage.orders.add(order);
-            return order;
-        }).setSize(size);
+        getOrderFromDb(price).orElseGet(
+                () -> {
+                Order order = new Order(type, price, size);
+                Storage.orders.add(order);
+                return order;
+                }
+        ).setSize(size);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class OrderDaoImpl implements OrderDao {
         return Storage.orders.stream()
                 .filter(o -> o.getType().equals(type) && o.getSize() > 0)
                 .max(Comparator.comparingInt(Order::getPrice))
-                .orElseThrow( () -> new NoSuchElementException("No order with type: "
+                .orElseThrow(() -> new NoSuchElementException("No order with type: "
                         + type + " and size more 0 to present"));
     }
 
@@ -39,7 +40,7 @@ public class OrderDaoImpl implements OrderDao {
         return Storage.orders.stream()
                 .filter(o -> o.getType().equals(type) && o.getSize() > 0)
                 .min(Comparator.comparingInt(Order::getPrice))
-                .orElseThrow( () -> new NoSuchElementException("No order with type: "
+                .orElseThrow(() -> new NoSuchElementException("No order with type: "
                         + type + " and size more 0 to present"));
     }
 
