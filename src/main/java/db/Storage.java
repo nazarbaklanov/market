@@ -5,5 +5,5 @@ import java.util.List;
 import model.Order;
 
 public class Storage {
-    public static List<Order> orders = new ArrayList<>();
+    public static final List<Order> orders = new ArrayList<>();
 }
