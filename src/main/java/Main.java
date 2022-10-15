@@ -1,15 +1,17 @@
 import dao.OrderDao;
 import dao.OrderDaoImpl;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.OperationType;
 import service.FileCreatorService;
-import service.FileReaderService;
 import service.FileWriterService;
 import service.ProcessorService;
 import service.impl.FileCreatorServiceImpl;
-import service.impl.FileReaderServiceImpl;
 import service.impl.FileWriterServiceImpl;
 import service.impl.ProcessorServiceImpl;
 import strategy.OperationHandlerStrategy;
@@ -32,19 +34,28 @@ public class Main {
         operationHandlerMap.put(OperationType.ORDER, new OrderOperationHandler(orderDao));
         operationHandlerMap.put(OperationType.QUERY, new QueryOperationHandler(orderDao));
 
-        FileReaderService readerService = new FileReaderServiceImpl();
-        List<String> stringList = readerService.read(INPUT_FILE_NAME);
-
         OperationHandlerStrategy operationHandlerStrategy
                 = new OperationHandlerStrategyImpl(operationHandlerMap);
-
-        ProcessorService processorService = new ProcessorServiceImpl(operationHandlerStrategy);
-        List<String> data = processorService.process(stringList);
 
         FileCreatorService fileCreatorService = new FileCreatorServiceImpl();
         fileCreatorService.createFile(OUTPUT_FILE_NAME);
 
+        ProcessorService processorService = new ProcessorServiceImpl(operationHandlerStrategy);
         FileWriterService fileWriterService = new FileWriterServiceImpl();
-        fileWriterService.write(data, OUTPUT_FILE_NAME);
+
+        List<String> dataToWrite = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(INPUT_FILE_NAME))) {
+            String strings;
+            while ((strings = reader.readLine()) != null) {
+                if (strings.isEmpty()) {
+                    continue;
+                }
+                dataToWrite.addAll(processorService.process(strings));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error read from input file: " + INPUT_FILE_NAME);
+        }
+        fileWriterService.write(dataToWrite, OUTPUT_FILE_NAME);
     }
 }

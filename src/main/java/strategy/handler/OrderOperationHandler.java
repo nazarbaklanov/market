@@ -1,6 +1,8 @@
 package strategy.handler;
 
 import dao.OrderDao;
+import db.Storage;
+import exception.OperationUnknownException;
 import java.util.List;
 import model.Order;
 import model.OrderType;
@@ -19,16 +21,36 @@ public class OrderOperationHandler implements OperationHandler {
 
     @Override
     public void commitOperation(String[] rawData, List<String> queries) {
-        if (rawData[TYPE_INDEX].equalsIgnoreCase(SELL_TYPE)) {
-            Order order = orderDao.getMaxOrder(OrderType.BID);
-            orderDao.update(OrderType.BID,
-                    order.getPrice(), order.getSize() - Integer.parseInt(rawData[VALUE_INDEX]));
-            return;
-        }
-        if (rawData[TYPE_INDEX].equalsIgnoreCase(BUY_TYPE)) {
-            Order order = orderDao.getMinOrder(OrderType.ASK);
-            orderDao.update(OrderType.ASK,
-                    order.getPrice(), order.getSize() - Integer.parseInt(rawData[VALUE_INDEX]));
+        int size = Integer.parseInt(rawData[VALUE_INDEX]);
+        while (size > 0) {
+            Order order;
+            switch (rawData[TYPE_INDEX]) {
+                case SELL_TYPE:
+                    order = orderDao.getMaxOrder(OrderType.BID).orElseThrow(
+                            () -> new OperationUnknownException("Not found the best price for: "
+                                    + SELL_TYPE));
+                    break;
+                case BUY_TYPE:
+                    order = orderDao.getMinOrder(OrderType.ASK).orElseThrow(
+                            () -> new OperationUnknownException("Not found the best price for: "
+                                    + SELL_TYPE));
+                    break;
+                default:
+                    throw new OperationUnknownException("Unknown operation command: "
+                            + rawData[TYPE_INDEX]);
+            }
+            int temp;
+            if (size > order.getSize()) {
+                temp = order.getSize();
+                size -= temp;
+            } else {
+                temp = size;
+                size = 0;
+            }
+            Order orderToWrite = Storage.orders.get(order.getPrice());
+            orderToWrite.setSize(order.getSize() - temp);
+            orderDao.update(orderToWrite.getType(),
+                    orderToWrite.getPrice(), orderToWrite.getSize());
         }
     }
 }

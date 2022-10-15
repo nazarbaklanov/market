@@ -19,18 +19,16 @@ public class ProcessorServiceImpl implements ProcessorService {
     }
 
     @Override
-    public List<String> process(List<String> rawData) {
+    public List<String> process(String rawData) {
         List<String> output = new ArrayList<>();
-        for (String s : rawData) {
-            String[] dataRow = s.split(SEPARATOR);
-            OperationType type = Arrays.stream(OperationType.values())
-                    .filter(o -> o.getType().equals(dataRow[TYPE_INDEX].toLowerCase()))
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new NoSuchElementException("Incorrect operation type: "
-                                    + dataRow[TYPE_INDEX]));
-            operationHandlerStrategy.getOperationHandler(type).commitOperation(dataRow, output);
-        }
+        String[] dataRow = rawData.split(SEPARATOR);
+        OperationType type = Arrays.stream(OperationType.values())
+                .filter(o -> o.getType().equals(dataRow[TYPE_INDEX].toLowerCase()))
+                .findFirst()
+                .orElseThrow(() ->
+                        new NoSuchElementException("Incorrect operation type: "
+                                + dataRow[TYPE_INDEX]));
+        operationHandlerStrategy.getOperationHandler(type).commitOperation(dataRow, output);
         return output;
     }
 }
