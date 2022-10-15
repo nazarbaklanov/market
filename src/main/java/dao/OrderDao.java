@@ -1,16 +1,19 @@
 package dao;
 
+import java.util.Optional;
 import model.Order;
 import model.OrderType;
 
 public interface OrderDao {
     void update(OrderType type, int price, int size);
 
-    Integer get(int price);
+    Order getOrder(Integer price);
 
-    Order getMaxOrder(OrderType type);
+    Integer getSize(Integer price);
 
-    Order getMinOrder(OrderType type);
+    Optional<Order> getMaxOrder(OrderType type);
+
+    Optional<Order> getMinOrder(OrderType type);
 
     void clear();
 }

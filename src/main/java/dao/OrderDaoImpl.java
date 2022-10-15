@@ -1,8 +1,7 @@
 package dao;
 
 import db.Storage;
-import java.util.Comparator;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.Optional;
 import model.Order;
 import model.OrderType;
@@ -10,48 +9,51 @@ import model.OrderType;
 public class OrderDaoImpl implements OrderDao {
     @Override
     public void update(OrderType type, int price, int size) {
-        getOrderFromDb(price).orElseGet(
-                () -> {
-                Order order = new Order(type, price, size);
-                Storage.orders.add(order);
-                return order;
-                }
-        ).setSize(size);
+        if (size == 0 && Storage.orders.containsKey(price)) {
+            Storage.orders.remove(price);
+        } else {
+            Order order = new Order(type, price, size);
+            Storage.orders.put(price, order);
+        }
     }
 
     @Override
-    public Integer get(int price) {
-        return getOrderFromDb(price)
-                .map(Order::getSize)
-                .orElse(0);
+    public Order getOrder(Integer price) {
+        return Storage.orders.get(price);
     }
 
     @Override
-    public Order getMaxOrder(OrderType type) {
-        return Storage.orders.stream()
-                .filter(o -> o.getType().equals(type) && o.getSize() > 0)
-                .max(Comparator.comparingInt(Order::getPrice))
-                .orElseThrow(() -> new NoSuchElementException("No order with type: "
-                        + type + " and size more 0 to present"));
+    public Integer getSize(Integer price) {
+        if (Storage.orders.containsKey(price)) {
+            return Storage.orders.get(price).getSize();
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public Order getMinOrder(OrderType type) {
-        return Storage.orders.stream()
-                .filter(o -> o.getType().equals(type) && o.getSize() > 0)
-                .min(Comparator.comparingInt(Order::getPrice))
-                .orElseThrow(() -> new NoSuchElementException("No order with type: "
-                        + type + " and size more 0 to present"));
+    public Optional<Order> getMaxOrder(OrderType type) {
+        Optional<Order> order = Optional.empty();
+        for (Map.Entry<Integer, Order> entry : Storage.orders.entrySet()) {
+            if (entry.getValue().getSize() > 0 && entry.getValue().getType().equals(type)) {
+                order = Optional.of(new Order(type, entry.getKey(), entry.getValue().getSize()));
+            }
+        }
+        return order;
+    }
+
+    @Override
+    public Optional<Order> getMinOrder(OrderType type) {
+        for (Map.Entry<Integer, Order> entry : Storage.orders.entrySet()) {
+            if (entry.getValue().getSize() > 0 && entry.getValue().getType().equals(type)) {
+                return Optional.of(new Order(type, entry.getKey(), entry.getValue().getSize()));
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
     public void clear() {
         Storage.orders.clear();
-    }
-
-    private Optional<Order> getOrderFromDb(int price) {
-        return Storage.orders.stream()
-                .filter(o -> o.getPrice() == price)
-                .findFirst();
     }
 }

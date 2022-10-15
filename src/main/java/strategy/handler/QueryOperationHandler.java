@@ -2,6 +2,7 @@ package strategy.handler;
 
 import dao.OrderDao;
 import java.util.List;
+import java.util.NoSuchElementException;
 import model.Order;
 import model.OrderType;
 
@@ -22,13 +23,17 @@ public class QueryOperationHandler implements OperationHandler {
     public void commitOperation(String[] rawData, List<String> queries) {
         String output;
         if (rawData[TYPE_INDEX].equalsIgnoreCase(BEST_BID)) {
-            Order order = orderDao.getMaxOrder(OrderType.BID);
+            Order order = orderDao.getMaxOrder(OrderType.BID).orElseThrow(
+                    () -> new NoSuchElementException("No exist: " + BEST_BID)
+            );
             output = order.getPrice() + SEPARATOR + order.getSize();
         } else if (rawData[TYPE_INDEX].equalsIgnoreCase(BEST_ASK)) {
-            Order order = orderDao.getMinOrder(OrderType.ASK);
+            Order order = orderDao.getMinOrder(OrderType.ASK).orElseThrow(
+                    () -> new NoSuchElementException("No exist: " + BEST_ASK)
+            );
             output = order.getPrice() + SEPARATOR + order.getSize();
         } else {
-            output = String.valueOf(orderDao.get(Integer.parseInt(rawData[PRICE_INDEX])));
+            output = String.valueOf(orderDao.getSize(Integer.parseInt(rawData[PRICE_INDEX])));
         }
         queries.add(output);
     }
