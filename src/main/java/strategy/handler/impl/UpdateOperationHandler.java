@@ -1,10 +1,11 @@
-package strategy.handler;
+package strategy.handler.impl;
 
 import dao.OrderDao;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import model.OrderType;
+import strategy.handler.OperationHandler;
 
 public class UpdateOperationHandler implements OperationHandler {
     private static final int PRICE_INDEX = 1;

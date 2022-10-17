@@ -17,9 +17,9 @@ import service.impl.ProcessorServiceImpl;
 import strategy.OperationHandlerStrategy;
 import strategy.OperationHandlerStrategyImpl;
 import strategy.handler.OperationHandler;
-import strategy.handler.OrderOperationHandler;
-import strategy.handler.QueryOperationHandler;
-import strategy.handler.UpdateOperationHandler;
+import strategy.handler.impl.OrderOperationHandler;
+import strategy.handler.impl.QueryOperationHandler;
+import strategy.handler.impl.UpdateOperationHandler;
 
 public class Main {
     private static final String INPUT_FILE_NAME = "input.txt";
