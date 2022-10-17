@@ -1,10 +1,11 @@
-package strategy.handler;
+package strategy.handler.impl;
 
 import dao.OrderDao;
 import java.util.List;
 import java.util.NoSuchElementException;
 import model.Order;
 import model.OrderType;
+import strategy.handler.OperationHandler;
 
 public class QueryOperationHandler implements OperationHandler {
     private static final String SEPARATOR = ",";

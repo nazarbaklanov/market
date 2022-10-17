@@ -1,4 +1,4 @@
-package strategy.handler;
+package strategy.handler.impl;
 
 import dao.OrderDao;
 import db.Storage;
@@ -6,6 +6,7 @@ import exception.OperationUnknownException;
 import java.util.List;
 import model.Order;
 import model.OrderType;
+import strategy.handler.OperationHandler;
 
 public class OrderOperationHandler implements OperationHandler {
     private static final String SELL_TYPE = "sell";
